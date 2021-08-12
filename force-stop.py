@@ -15,6 +15,7 @@ class cleaner:
         self.list = {}
         self.sizes = []
         self.packages = []
+        self.safe_list = []
         self.black_list = ['org.pocketworkstation.pckeyboard']
         self.killed=[]
         self.killSize=[]
@@ -50,12 +51,18 @@ class cleaner:
             if last in self.packages:
                 self.safeAppend(last)
         self.list = sorted(self.list)
+        self.safeKill()
         proc.wait()
     def safeAppend(self, task):
          if ':' in task:
              task = (task.split(':'))[0]
-         if task not in self.black_list:
+         if task not in self.list:
             self.list.append(task)
+    def safeKill(self):
+        self.safe_list = []
+        for app in self.list:
+            if app not in self.black_list:
+               self.safe_list.append(app)
     def killOne(self, task):
         save = {}
         self.getList()
@@ -80,7 +87,7 @@ class cleaner:
         self.hashes[has][task]=save
         return save
     def randomKill(self):
-        return self.killOne(choices(self.list)[0])
+        return self.killOne(choices(self.safe_list)[0])
     def checkAndKill(self):
         self.getList()
         print(self.list)
