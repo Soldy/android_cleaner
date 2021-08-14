@@ -1,13 +1,12 @@
-import subprocess
 import array
 import time
 import sqlite3
 import lib.configread as __config
 import lib.list as listC
+from lib.runner import runner
 from random import choices
 
 
-print(__config.whiteList())
 _list = listC.listClass()
 _list.whiteInit(__config.whiteList())
 
@@ -17,47 +16,28 @@ class cleaner:
         self.getList()
     def listPackages(self):
         _list.packageClean()
-        proc = subprocess.Popen(
-            'adb shell pm list packages',
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT
-        )
-        for line in proc.stdout.readlines():
-            line = line.decode('utf-8')
-            parts = line.split(':')
-            _list.packageAppend(parts[1])
-        proc.wait()
+        for line in runner(
+            'adb shell pm list packages'
+        ):
+            _list.packageAppend(line.decode('utf-8').split(':')[1])
     def getList(self):
         _list.appClean()
-        proc = subprocess.Popen(
+        for line in runner(
             'adb shell ps',
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT
-        )
-        for line in proc.stdout.readlines():
+        ):
             parts = line.split()
             last = parts[len(parts)-1].decode('utf-8')
             _list.appAppend(last)
         _list.safeUpdate()
         _list.priorityUpdate()
-        proc.wait()
     def killOne(self, app):
         save = {}
         self.getList()
         has = _list.appHash()
         save['before'] = _list.appLen()
-        command = (
+        kill = runner(
            'adb shell am force-stop '+app
         )
-        kill = subprocess.Popen(
-           command, 
-           shell=True,
-           stdout=subprocess.PIPE,
-           stderr=subprocess.STDOUT
-        )
-        kill.wait()
         _list.killed(app)
         self.getList()
         save['after'] = _list.appLen()
