@@ -17,7 +17,7 @@ class listClass:
        self._history = []
        self._whites = []
    def appClean(self):
-       self.apps = []
+       self._apps = []
    def appHash(self):
       return hashlib.sha3_512(
           ''.join(self._apps).encode('utf8')
