@@ -1,12 +1,12 @@
 import array
 import time
-import sqlite3
 import lib.configread as __config
 import lib.list as listC
+import lib.sql.history as historyC
 from lib.runner import runner
 from random import choices
 
-
+_history = historyC.historyDatabase()
 _list = listC.listClass()
 _list.whiteInit(__config.whiteList())
 
@@ -26,8 +26,7 @@ class cleaner:
             'adb shell ps',
         ):
             parts = line.split()
-            last = parts[len(parts)-1].decode('utf-8')
-            _list.appAppend(last)
+            _list.appAppend(parts[len(parts)-1].decode('utf-8'))
         _list.safeUpdate()
         _list.priorityUpdate()
     def killOne(self, app):
@@ -42,6 +41,11 @@ class cleaner:
         self.getList()
         save['after'] = _list.appLen()
         _list.hashAppend(has, app, save)
+        _history.kill(
+            has,
+            _list.hash(app),
+            (save['after']-save['before'])
+        )
         return save
     def randomKill(self):
         if _list.priorityLen() > 0 :

@@ -1,3 +1,4 @@
+import sqlite3
 
 class smartDatabase:
    def __init__(self):
@@ -26,4 +27,3 @@ class smartDatabase:
        for row in cur.execute("SELECT * FROM kill_try WHERE  hash =  ?", (hash_)):
            list_.append(row[1])
 
-import sqlite3

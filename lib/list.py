@@ -19,8 +19,12 @@ class listClass:
    def appClean(self):
        self._apps = []
    def appHash(self):
+      return self.hash(
+          ''.join(self._apps)
+      )
+   def hash(self, text):
       return hashlib.sha3_512(
-          ''.join(self._apps).encode('utf8')
+          text.encode('utf8')
       ).hexdigest()
    def appLen(self):
       return len(self._apps)
