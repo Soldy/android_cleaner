@@ -89,6 +89,8 @@ class listClass:
       return len(self._safes)
    def safeRandom(self):
       return copy.deepcopy(choices(self._safes)[0])
+   def safeGet(self):
+      return copy.deepcopy(self._safes)
    def whiteInit(self, white):
        self._whites = copy.deepcopy(white)
 

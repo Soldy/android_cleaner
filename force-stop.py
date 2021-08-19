@@ -47,6 +47,22 @@ class cleaner:
             (save['after']-save['before'])
         )
         return save
+    def killAll(self):
+        save = {}
+        self.getList()
+        has = _list.appHash()
+        save['before'] = _list.appLen()
+        command =''
+        for app in _list.safeGet():
+            command += 'am force-stop '+app+' ;'
+        kill = runner(
+           'adb shell "'+command+'"'
+        )
+        _list.killed(app)
+        self.getList()
+        save['after'] = _list.appLen()
+        _list.hashAppend(has, app, save)
+        return save
     def randomKill(self):
         if _list.priorityLen() > 0 :
             return self.killOne(_list.priorityRandom())
@@ -67,9 +83,17 @@ class cleaner:
         while (_list.priorityLen()>0):
             self.checkAndKill()
             time.sleep(2)
+    def faster(self):
+        print(_list.safeLen())
+        print(_list.priorityLen())
+        print(self.killAll())
+        time.sleep(2)
+        self.priority()
+
+
 
 
 
 test = cleaner()
-test.priority()
+test.faster()
 
