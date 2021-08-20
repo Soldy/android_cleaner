@@ -12,18 +12,31 @@ class smartDatabase:
        )
        self.con.commit()
    def saveKill(self, hash_, app_, before, after):
-       self.cur(
-           "INSERT INTO kill_try VALUES ('"+hash_+"', '"+app_+"', '"+str(before)+"', '"+str(after)+"')"
+       self.cur.execute(
+           "INSERT INTO kill_try VALUES (%(hash)s, %(app)s, %(before), %(after)s)",
+           {
+               "hash":hash_,
+               "app":app_,
+               "before":str(before),
+               "after":str(after)
+           }
        )
        self.con.commit()
    def getKillProcess(self, hash_, app_):
-       cur.execute("SELECT * FROM kill_try WHERE  hash =  ? AND app = ?", (hash_, app_))
+       self.cur.execute(
+           "SELECT * FROM kill_try WHERE  hash =  ? AND app = ?", 
+           (hash_, app_)
+       )
        return cur.fetchall()
    def getKill(self, hash_):
-       cur.execute("SELECT * FROM kill_try WHERE  hash =  ?", (hash_))
+       self.cur.execute(
+           "SELECT * FROM kill_try WHERE  hash =  ?",
+           (hash_)
+       )
        return cur.fetchall()
    def getApps(self, hash_):
        list_ = []
-       for row in cur.execute("SELECT * FROM kill_try WHERE  hash =  ?", (hash_)):
+       for row in self.getKill(hash_):
            list_.append(row[1])
+       return list_
 
