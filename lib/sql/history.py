@@ -15,11 +15,11 @@ class historyDatabase:
        self.con.commit()
    def kill(self, hash_, app_, result):
        self.cur.execute(
-           "INSERT INTO kill_history VALUES (%(hash)s, %(app)s, %(result)s)",
+           "INSERT INTO kill_history VALUES (:hash, :app, :result )",
            {
                "hash":hash_,
                "app":app_,
-               "result":str(result)
+               "result":result
            }
        )
        self.con.commit()
